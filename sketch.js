@@ -1,102 +1,148 @@
 class Figura {
-   constructor(x, y, alto, ancho, vx, vy) {
+  //CONSTRUCTOR
+    constructor(x, y, altura, base) {
     this.posicion = createVector(x,y);
-    this.alto = alto;
-    this.ancho = ancho;
-    this.fillred = 255;
-    this.fillgreen = 87;
-    this.fillblue = 57;
-    this.velocidad = createVector(vx,vy);
+    this.altura = altura;
+    this.base = base;
+    this.fillred = 0;
+    this.fillgreen = 0;
+    this.fillblue = 57; 
   }
-  update()
-  {
-      if (this.posicion.x + this.ancho >= 400)
-        {  
-          let valor = random(3); 
-          this.velocidad.x = this.velocidad.x * -valor;
-         this.velocidad.y = this.velocidad.y * -valor;
-        }
-      this.posicion.add(this.velocidad);
-  }
+       
   
 }
 
-class Rectangulo extends Figura{
-  constructor(x, y, alto, ancho, vx, vy) {
-      super(x, y, alto, ancho, vx, vy);
+
+
+class Rectangulo extends Figura
+{
+  constructor(x, y, altura, base) 
+  {
+     super(x, y, altura, base)
   }
   
-draw()
+  draw()
+  {    
+   fill(this.fillred,this.fillgreen,this.fillblue); 
+    rect(this.posicion.x,this.posicion.y,this.altura,this.base);
+    
+  }
+}
+class Triangulo extends Figura
+{
+  constructor(x, y, altura, base) 
   {
-fill(this.fillred,this.fillgreen,this.fillblue);
-rect(this.posicion.x,this.posicion.y,this.alto,this.ancho);
+     super(x, y, altura, base)
+  }
+  
+  draw()
+  {    
+   fill(this.fillred,this.fillgreen,this.fillblue); 
+    triangle(this.posicion.x,this.posicion.y,this.altura,this.base);
+    
   }
 }
 
-class Elipse extends Figura{
-  constructor(x, y, alto, ancho, vx, vy) {
-      super(x, y, alto, ancho, vx, vy);
+class Elipse extends Figura 
+{
+  constructor(x, y, altura, base) 
+  {
+     super(x, y, altura, base)
   }
   
-draw()
+  draw()
   {
-fill(this.fillred,this.fillgreen,this.fillblue);
-ellipse(this.posicion.x,this.posicion.y,this.alto,this.ancho);
+   fill(this.fillred,this.fillgreen,this.fillblue); 
+    ellipse(this.posicion.x,this.posicion.y,this.altura,this.base);
   }
 }
 
-var figuras = [];
-var dibujando = 'circulo';
-var btnCirculo = null;
+
+
+var figuras =[];
+var dibujando = 'circulo'
+var btnCirculo =  null;
 var btnRectangulo = null;
-
-
-function mouseClicked() {
-  // Se crea un objeto según la opción actual
-if (mouseY > 25)
-  {
-  if (dibujando == 'circulo')
-    figuras.push(new Elipse(mouseX,mouseY,20,20,3,1));
-  else if (dibujando == 'rectangulo')
-    figuras.push(new Rectangulo(mouseX,mouseY,20,20,2,1));
-  }
-
-  return false;
-}
+var btnTriangulo=null;
 
 function setup() {
   createCanvas(400, 400);
-  
-  btnCirculo = createButton('Circulo');
-  btnCirculo.position(0, 0);
-  btnCirculo.mousePressed(changeCirculo);
-  btnCirculo.style( 'background-color','#cccccc');
-  
-  btnRectangulo = createButton('Rectangulo');
-  btnRectangulo.position(75, 0);
+  //BOTON CIRCULO
+  btnCirculo  = createButton ('Circulo')
+  btnCirculo .position(0,0);
+  btnCirculo .mousePressed(changeCirculo);
+  //BOTON  RECTANGULO
+  btnRectangulo = createButton ('Rectangulo')
+  btnRectangulo.position(75,0);
   btnRectangulo.mousePressed(changeRectangulo);
+  //BOTON TRIANGULO
+  btnTriangulo = createButton ('Linea')
+  btnTriangulo.position(175,0);
+  btnTriangulo.mousePressed(changeTriangulo);
+  
+  
+  figuras.push(new Rectangulo (0,0,20,20));
+  figuras.push(new Elipse (0,0,50,50));
+  figuras.push(new Triangulo(0,0,20,20))
 }
 
-function changeCirculo()
-   {
-     btnCirculo.style( 'background-color','#cccccc');
-     btnRectangulo.style( 'background-color','#f0f0f0');
-     dibujando = 'circulo';
-   }
-function changeRectangulo()
-   {
-     btnRectangulo.style( 'background-color','#cccccc');
-     btnCirculo.style( 'background-color','#f0f0f0');
-     dibujando = 'rectangulo';
-   }
+//SOMBREADO DE CIRCULO
+function changeCirculo ()
+{
+  btnCirculo.style('backgroud-color','#cccccc');
+  btnRectangulo.style('backgroud-color','#f0f0f0');
+    btnTriangulo.style('backgroud-color','#f0f0f0');
+  dibujando = 'circulo';
+}
+//SOBREADO DE RECTANGULO
+function changeRectangulo ()
+{
+   btnRectangulo.style('backgroud-color','#cccccc');
+  btnCirculo.style('backgroud-color','#f0f0f0');
+    btnTriangulo.style('backgroud-color','#f0f0f0');
 
- 
+  dibujando = 'rectangulo';
+}
+function changeTriangulo ()
+{
+   btnTriangulo.style('backgroud-color','#cccccc');
+  btnCirculo.style('backgroud-color','#f0f0f0');
+  btnRectangulo.style('backgroud-color','#f0f0f0');
+  dibujando = 'triangulo';
+}
 
 function draw() {
   background(220);
-  figuras.forEach((fig) => 
-   {
-    fig.draw();
-    fig.update();
-   });
+ 
+  figuras.forEach(function(value, index, array) {
+  value.draw();
+
+    
+    
+ 
+});
+
 }
+
+
+function mouseClicked() {
+  // SE DIBUJA LA FIGURA SELECCIONADA
+  if(mouseY > 25)
+    {
+      //SE DIBUJA UN CIRCULO
+        if(dibujando == 'circulo') 
+    figuras.push(new Elipse (mouseX,mouseY,20,20,3,1));
+  //SE DIBUJA UN RECTANGULO(CUADRADO)
+ else if (dibujando == 'rectangulo') 
+  figuras.push(new Rectangulo (mouseX,mouseY,20,20,2,1));
+      //SE DIBUJA UN TRIANGULO
+      else if(dibujando=="triangulo")
+        figuras.push(new Triangulo(mouseX,mouseY,mouseY,mouseX,mouseX,mouseY));
+   
+    }
+
+
+  return false;
+ 
+}
+
