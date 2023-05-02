@@ -1,148 +1,128 @@
-class Figura {
-  //CONSTRUCTOR
-    constructor(x, y, altura, base) {
-    this.posicion = createVector(x,y);
-    this.altura = altura;
-    this.base = base;
-    this.fillred = 0;
-    this.fillgreen = 0;
-    this.fillblue = 57; 
-  }
-       
-  
-}
+//Crear clase Canasta para poder construir la figura rectangular que representa mi canasta
 
+class Canasta {
+  constructor() {
+    this.ancho = 75;
+    this.alto = 50;
+    this.x = width / 2 - this.ancho / 2;
+    this.y = height - this.alto - 10;
+    this.velocidad = 30;
+  }
+//Método para mostrar mi canasta
+  mostrar() {
+    fill(255, 174, 174);
+    noStroke();
+    rect(this.x, this.y, this.ancho, this.alto);
+  }
 
+//Método para mover mi canasta en el eje x con el eje x del mouse
+  mover() {
+    this.x = mouseX - this.ancho / 2;
 
-class Rectangulo extends Figura
-{
-  constructor(x, y, altura, base) 
-  {
-     super(x, y, altura, base)
-  }
-  
-  draw()
-  {    
-   fill(this.fillred,this.fillgreen,this.fillblue); 
-    rect(this.posicion.x,this.posicion.y,this.altura,this.base);
-    
-  }
-}
-class Triangulo extends Figura
-{
-  constructor(x, y, altura, base) 
-  {
-     super(x, y, altura, base)
-  }
-  
-  draw()
-  {    
-   fill(this.fillred,this.fillgreen,this.fillblue); 
-    triangle(this.posicion.x,this.posicion.y,this.altura,this.base);
-    
+    if (this.x < 0) {
+      this.x = 0;
+    } else if (this.x + this.ancho > width) {
+      this.x = width - this.ancho;
+    }
   }
 }
 
-class Elipse extends Figura 
-{
-  constructor(x, y, altura, base) 
-  {
-     super(x, y, altura, base)
+//Clase comida de la cual van a heredar el pastel y las frutas
+class Comida {
+  constructor() {
+    this.lado = 40;
+    this.x = random(width - this.lado);
+    this.y = -this.lado;
+    this.velocidad = random(2, 5);
   }
+
+  caer() {
+    this.y += this.velocidad;
+  }
+
+  mostrar() {}
   
-  draw()
-  {
-   fill(this.fillred,this.fillgreen,this.fillblue); 
-    ellipse(this.posicion.x,this.posicion.y,this.altura,this.base);
+  colision(canasta) {
+    if (
+      this.y + this.lado > canasta.y &&
+      this.y + this.lado < canasta.y + canasta.alto &&
+      this.x + this.lado > canasta.x &&
+      this.x < canasta.x + canasta.ancho
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+//Clase Fruta que hereda de comida
+class Fruta extends Comida {
+  mostrar() {
+    fill(184, 174, 255);
+    rect(this.x, this.y, this.lado, this.lado);
   }
 }
 
 
+//Clase pastel hereda de comida
+class Pastel extends Comida {
+  mostrar() {
+    fill(175, 255, 171);
+    rect(this.x, this.y, this.lado, this.lado);
+  }
+}
 
-var figuras =[];
-var dibujando = 'circulo'
-var btnCirculo =  null;
-var btnRectangulo = null;
-var btnTriangulo=null;
 
+let canasta;
+let pcomida = [];
+let score = 0;
+let gameover = false;
+
+  
 function setup() {
   createCanvas(400, 400);
-  //BOTON CIRCULO
-  btnCirculo  = createButton ('Circulo')
-  btnCirculo .position(0,0);
-  btnCirculo .mousePressed(changeCirculo);
-  //BOTON  RECTANGULO
-  btnRectangulo = createButton ('Rectangulo')
-  btnRectangulo.position(75,0);
-  btnRectangulo.mousePressed(changeRectangulo);
-  //BOTON TRIANGULO
-  btnTriangulo = createButton ('Linea')
-  btnTriangulo.position(175,0);
-  btnTriangulo.mousePressed(changeTriangulo);
-  
-  
-  figuras.push(new Rectangulo (0,0,20,20));
-  figuras.push(new Elipse (0,0,50,50));
-  figuras.push(new Triangulo(0,0,20,20))
-}
-
-//SOMBREADO DE CIRCULO
-function changeCirculo ()
-{
-  btnCirculo.style('backgroud-color','#cccccc');
-  btnRectangulo.style('backgroud-color','#f0f0f0');
-    btnTriangulo.style('backgroud-color','#f0f0f0');
-  dibujando = 'circulo';
-}
-//SOBREADO DE RECTANGULO
-function changeRectangulo ()
-{
-   btnRectangulo.style('backgroud-color','#cccccc');
-  btnCirculo.style('backgroud-color','#f0f0f0');
-    btnTriangulo.style('backgroud-color','#f0f0f0');
-
-  dibujando = 'rectangulo';
-}
-function changeTriangulo ()
-{
-   btnTriangulo.style('backgroud-color','#cccccc');
-  btnCirculo.style('backgroud-color','#f0f0f0');
-  btnRectangulo.style('backgroud-color','#f0f0f0');
-  dibujando = 'triangulo';
+  canasta = new Canasta();
 }
 
 function draw() {
-  background(220);
- 
-  figuras.forEach(function(value, index, array) {
-  value.draw();
+  background(174, 220,255);
+  canasta.mostrar();
+  canasta.mover(mouseX);
+  
+  
+  //If para que cada 25 frames haga una comida nueva, ya sea 50% prob. de fruta y 50% de pastel
+    if (frameCount % 25 === 0) {
+    let comida = random() < 0.5 ? new Fruta() : new Pastel();
+    pcomida.push(comida);
+  }
+  
+  for (let i = pcomida.length - 1; i >= 0; i--) {
+    pcomida[i].mostrar();
+    pcomida[i].caer();
 
-    
-    
- 
-});
-
-}
-
-
-function mouseClicked() {
-  // SE DIBUJA LA FIGURA SELECCIONADA
-  if(mouseY > 25)
-    {
-      //SE DIBUJA UN CIRCULO
-        if(dibujando == 'circulo') 
-    figuras.push(new Elipse (mouseX,mouseY,20,20,3,1));
-  //SE DIBUJA UN RECTANGULO(CUADRADO)
- else if (dibujando == 'rectangulo') 
-  figuras.push(new Rectangulo (mouseX,mouseY,20,20,2,1));
-      //SE DIBUJA UN TRIANGULO
-      else if(dibujando=="triangulo")
-        figuras.push(new Triangulo(mouseX,mouseY,mouseY,mouseX,mouseX,mouseY));
-   
+    if (pcomida[i].colision(canasta)) {
+      if (pcomida[i] instanceof Pastel) {
+        gameover = true;
+      } else {
+        pcomida.splice(i, 1);
+        score += 1;
+      }
+    } else if (pcomida[i].y > height) {
+      pcomida.splice(i, 1);
     }
+  }
+  
+  //texto de score
+  fill(31, 0, 255);
+  textSize(20);
+  text(`Score: ${score}`, 10, 30);
 
-
-  return false;
- 
+  if (gameover) {
+    fill(255, 0, 0);
+    textSize(50);
+    text("GAME OVER", width/2 - 150, height/2);
+    noLoop();
+  }
+  
 }
-
